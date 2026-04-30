@@ -119,6 +119,38 @@ By default the bridge opens the first Fanatec device that supports haptic. If yo
 
 ---
 
+## Optional: Arduino push-button trigger
+
+The `Arduino/pushButtonDemo.ino` sketch lets a **physical button** start the ProtoPie prototype (e.g. kick off the Pie Car navigation simulation that then drives this FFB bridge). The Arduino sends ProtoPie Connect's `messageId||value` serial format, so no extra software is needed in between.
+
+### Wiring
+
+| Arduino | Connect to |
+|---|---|
+| `A0` | One leg of a momentary push-button |
+| `GND` | The other leg of the button |
+
+That's it — `A0` uses the chip's internal pull-up, so no external resistor is required. Any Arduino board with a USB serial connection works (Uno, Nano, Leonardo, Pro Micro, etc.).
+
+### Flashing the sketch
+
+1. Install the [Arduino IDE](https://www.arduino.cc/en/software).
+2. Open `Arduino/pushButtonDemo.ino`.
+3. **Tools → Board** → select your board.
+4. **Tools → Port** → select the COM port the board enumerated as.
+5. Click **Upload** (the right-arrow icon).
+6. Open **Tools → Serial Monitor** at **9600 baud** and press the button — you should see `Arduino||1` on press and `Arduino||0` on release. Close the Serial Monitor after testing (it holds the COM port).
+
+### Hooking it into ProtoPie Connect
+
+1. In **ProtoPie Connect**, open **Add Device → Serial** (or the equivalent serial input panel for your version).
+2. Select the Arduino's COM port and set the baud rate to **9600**.
+3. In your ProtoPie Studio prototype, add a **Receive Message** trigger with **Message ID = `Arduino`**. Use the message's value (`1` = pressed, `0` = released) to start your navigation simulation.
+
+Once the prototype is running, pressing the button → emits `Arduino||1` → Connect routes it to ProtoPie → your prototype starts the simulation and begins sending FFB messages (`set_ffb`, `set_vibration`, etc.) → this bridge translates them into wheel force feedback.
+
+---
+
 ## Configuration
 
 Edit the top of `main.py`:
