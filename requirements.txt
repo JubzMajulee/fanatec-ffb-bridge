@@ -1,0 +1,3 @@
+python-socketio[client]
+pysdl2
+pysdl2-dll
